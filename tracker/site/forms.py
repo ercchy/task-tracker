@@ -10,6 +10,8 @@ class BaseTrackerForm(FoundationModelForm):
     def __init__(self, user=None, title=None, *args, **kwargs):
         self.title = title
         self.user = user
+        print
+        print "SOME KWARGS?", kwargs
 
         super(BaseTrackerForm, self).__init__(*args, **kwargs)
 
@@ -52,8 +54,15 @@ class TicketForm(BaseTrackerForm):
         self.project = project
         super(TicketForm, self).__init__(*args, **kwargs)
 
-
         self.fields['assignees'].queryset = get_user_model().objects.all()
+
     def pre_save(self, instance):
         instance.created_by = self.user
-        instance.project = self.project
+        # turns out this is not neeed on the update
+        #instance.project = self.project
+
+        #When updating self.project is None so it is overriding the instance
+        #  project which is actually correct. This is only needed when
+        # project is updating and not when it is getting created
+        if self.project:
+            instance.project = self.project
