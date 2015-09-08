@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="large-12 large-centered columns">
+	<h4><small>This ticket was created {{ ticket.created|naturaltime }} by
+		{{ ticket.created_by.email }}</small></h4>
+	<hr />
+	<div class="row">
+		<h2>{{ ticket.title }}
+			{% if user.is_authenticated %}
+				<small>
+					<a class="label"
+					   href="{% url "ticket-update" project_id=ticket.project.pk ticket_id=ticket.pk %}">
+						<i class="fi-pencil"></i>
+					</a>
+				</small>
+			{% endif %}</h2>
+	</div>
+	<div class="row">
+		<div class="large-8 columns">
+			<h4>Description</h4>
+			<div>
+				{{ ticket.description }}
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="large-8 columns">
+			<h4>Assignees</h4>
+			<ul>
+				{% for user in ticket.assignees.all %}
+					<li>{{ user.email }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+
+	</div>
+
+<div class="row">
+	<div class="controls">
+
+	</div>
+</div>
+</div>
+{% endblock %}

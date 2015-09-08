@@ -2,6 +2,7 @@ from django.conf.urls import url, patterns
 
 from .views import (
 	my_tickets_view,
+	ticket_view,
 	create_project_view,
 	update_project_view,
 	project_view,
@@ -33,5 +34,10 @@ urlpatterns = patterns(
 	url(
 		r'^projects/(?P<project_id>\d+)/$', project_view,
 		name='project-detail'),
-	url(r'^$', my_tickets_view, name='my-tickets'),
+	url(
+		r'^projects/(?P<project_id>\d+)/tickets/(?P<ticket_id>\d+)/$',
+		ticket_view,
+		name='ticket-detail'
+	),
+	url(r'^tickets$', my_tickets_view, name='my-tickets'),
 )

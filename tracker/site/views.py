@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView
 
 from .forms import ProjectForm, TicketForm
@@ -9,12 +9,22 @@ from .models import Project, Ticket
 
 class ProjectContextMixin(object):
     project = None
+    ticket = None
+    tickets = None
 
     def get_project(self):
         if not self.project:
-            self.project = get_object_or_404(Project, pk=self.kwargs['project_id'])
+            self.project = get_object_or_404(Project, pk=self.kwargs[
+                'project_id'])
 
         return self.project
+
+    def get_ticket(self):
+        if not self.ticket:
+            self.ticket = get_object_or_404(Ticket, pk=self.kwargs[
+                'ticket_id'])
+
+        return self.ticket
 
     def get_context_data(self, **kwargs):
         context = super(ProjectContextMixin, self).get_context_data(**kwargs)
@@ -22,31 +32,9 @@ class ProjectContextMixin(object):
         return context
 
 
-class MyTicketsView(TemplateView):
-    template_name = "site/my_tickets.html"
-
-    def get_context_data(self):
-        if self.request.user.is_authenticated():
-            tickets = (
-                Ticket.objects
-                .filter(assignees=self.request.user.pk)
-                .order_by('-modified')
-            )
-        else:
-            tickets = []
-
-        return {
-            'tickets': tickets
-        }
-
-
-my_tickets_view = MyTicketsView.as_view()
-
-
 class ProjectListView(ListView):
     model = Project
     template_name = "site/project_list.html"
-
 
 project_list_view = ProjectListView.as_view()
 
@@ -64,7 +52,6 @@ class CreateProjectView(CreateView):
         kwargs['user'] = self.request.user
         kwargs['title'] = 'Create project'
         return kwargs
-
 
 create_project_view = login_required(CreateProjectView.as_view())
 
@@ -104,6 +91,27 @@ class ProjectView(ProjectContextMixin, TemplateView):
 project_view = ProjectView.as_view()
 
 
+class MyTicketsView(TemplateView):
+    template_name = "site/my_tickets.html"
+
+    def get_context_data(self):
+        if self.request.user.is_authenticated():
+            tickets = (
+                Ticket.objects
+                .filter(assignees=self.request.user.pk)
+                .order_by('-modified')
+            )
+        else:
+            tickets = []
+
+        return {
+            'tickets': tickets
+        }
+
+
+my_tickets_view = MyTicketsView.as_view()
+
+
 class CreateTicketView(ProjectContextMixin, CreateView):
     model = Ticket
     form_class = TicketForm
@@ -141,3 +149,19 @@ class UpdateTicketView(ProjectContextMixin, UpdateView):
 
 
 update_ticket_view = login_required(UpdateTicketView.as_view())
+
+
+class TicketView(ProjectContextMixin, TemplateView):
+    template_name = "site/ticket_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TicketView, self).get_context_data(**kwargs)
+
+        ticket = self.get_ticket()
+        context.update({
+            "ticket": ticket,
+        })
+        return context
+
+
+ticket_view = TicketView.as_view()
