@@ -1,40 +1,66 @@
 {% extends "base.html" %}
 
+{% load humanize %}
+
 {% block content %}
 <div class="large-12 large-centered columns">
 	<div class="row">
-		<h2>{{ project.title }} <small><a href="{% url "project-update" project_id=project.pk %}">edit</a></small></h2>
+		<h2><small>Project name</small>
+			<br />{{ project.title }}
+			{% if user.is_authenticated %}
+				<small>
+					<a href="{% url "project-update" project_id=project.pk %}">edit</a>
+				</small>
+			{% endif %}
+		</h2>
+		<h4>
+			<small>The work on this project started {{ project.created|naturaltime }}
+				by {{ project.created_by.email }}</small>
+		</h4>
 	</div>
-	<div class="row">
-		<table>
-			<thead>
+
+	{% if tickets %}
+		<div class="row">
+			<table>
+				<thead>
 				<tr>
 					<th width="1200">Title</th>
 					<th width="1200">Assigned</th>
 					<th></th>
 				</tr>
-			</thead>
-			<tbody>
+				</thead>
+				<tbody>
 				{% for ticket in tickets %}
-				<tr>
-					<td>{{ ticket.title }}</td>
-					<td>
-					{% for user in ticket.assignees.all %}
-						{{ user.email }}{% if not forloop.last %},{% endif %}
-					{% endfor %}
-					</td>
-					<td>
-						<a href="{% url "ticket-update" project_id=project.pk ticket_id=ticket.pk %}">
-							<i class="fi-pencil">
+					<tr>
+						<td>
+							<a href="
+						{% url 'ticket-detail' project_id=ticket.project_id ticket_id=ticket.pk %}"
+									>{{ ticket.title }}</a>
+						</td>
+						<td>
+							{% with users=ticket.assignees.all %}
+								{% if users %}
+									{% for user in users %}
+										{{ user.email }}{% if not forloop.last %},{% endif %}
+									{% endfor %}
+								{% else %}
+									No assigned users
+								{% endif %}
+							{% endwith %}
+						</td>
+						<td>
+							<a href="{% url "ticket-update" project_id=project.pk ticket_id=ticket.pk %}">
+								<i class="fi-pencil">
 
-							</i>
-						</a>
-					</td>
-				</tr>
+								</i>
+							</a>
+						</td>
+					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	</div>
+	{% endif %}
 	<div class="row">
 		<p><a href="{% url "ticket-create" project_id=project.pk %}" class="button">Create ticket</a></p>
 	</div>
