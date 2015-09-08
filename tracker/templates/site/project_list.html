@@ -3,6 +3,7 @@
 {% block content %}
 <div class="large-12 large-centered columns">
 	<div class="row">
+		<h1>Projects that we <3</h1>
 		<table>
 			<thead>
 				<tr>
@@ -13,7 +14,11 @@
 			<tbody>
 				{% for project in object_list %}
 				<tr>
-					<td><a href="{% url "project-detail" project_id=project.pk %}">{{ project.title }}</a></td>
+					<td>
+						<a href="{% url "project-detail" project_id=project.pk %}">
+							{{ project.title }} <span class="label">{{ project.tickets.count }}</span>
+						</a>
+					</td>
 					<td>
 						<a href="{% url "project-update" project_id=project.pk %}">
 							<i class="fi-pencil"></i>
@@ -25,7 +30,9 @@
 		</table>
 	</div>
 	<div class="row">
-		<p><a href="{% url "project-create" %}" class="button">Create project</a></p>
+		<p>
+			<a href="{% url "project-create" %}" class="button">Create project</a>
+		</p>
 	</div>
 </div>
 {% endblock %}
