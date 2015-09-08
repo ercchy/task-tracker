@@ -8,7 +8,13 @@
 			{% for ticket in tickets %}
 				<div class="large-3 medium-6 small-12 columns{% if forloop.last %} end{% endif %}">
 					<div class="panel">
-						<h5><a href="{% url "ticket-update" project_id=ticket.project_id ticket_id=ticket.pk %}">{{ ticket.project.title }}: {{ ticket.title }}</a></h5>
+						{% if ticket.project %}
+							<h5>
+								<a href="{% url "ticket-update" project_id=ticket.project_id ticket_id=ticket.pk %}">
+									{{ ticket.project.title }}: {{ ticket.title }}
+								</a>
+							</h5>
+						{% endif %}
 						<hr>
 						<p>{{ ticket.description }}</p>
 						<small>Last updated: {{ ticket.modified }}</small>
