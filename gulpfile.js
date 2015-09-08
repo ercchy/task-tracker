@@ -1,7 +1,9 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var concat = require('gulp-concat');
+var livereload = require('gulp-livereload');
 
+var baseTemplateDir = 'tracker/templates';
 var baseSrcDir = 'tracker/static-dev';
 var baseDestDir = 'tracker/static';
 
@@ -16,7 +18,7 @@ gulp.task('copy-foundation-fonts', function () {
 		.pipe(gulp.dest(baseSrcDir + '/css'));
 });
 
-gulp.task('build-styles', ['sass', 'copy-foundation-fonts'])
+
 
 gulp.task('concat-js', function() {
 	gulp.src([
@@ -38,5 +40,17 @@ gulp.task('copy-js', function () {
 	gulp.src(baseSrcDir + '/components/modernizr/modernizr.js').pipe(gulp.dest(baseDestDir + '/js/'));
 });
 
+gulp.task('build-styles', ['sass', 'copy-foundation-fonts'])
+
+// Watch task
+// Watches SASS
+gulp.task('watch', function() {
+  livereload.listen();
+  gulp.watch([
+    baseSrcDir + '/scss/*.scss',
+    baseTemplateDir + '/*.html',
+  ], ['sass'])
+});
+
 gulp.task('build', ['build-styles', 'copy-styles', 'copy-js', 'concat-js'])
-gulp.task('default', ['build-styles']);
+gulp.task('default', ['build-styles', 'watch']);
