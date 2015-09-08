@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from crispy_forms_foundation.forms import FoundationModelForm
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, ButtonHolder, Submit, Fieldset
 
 from .models import Project, Ticket
 
@@ -51,6 +53,14 @@ class TicketForm(BaseTrackerForm):
     def __init__(self, project=None, *args, **kwargs):
         self.project = project
         super(TicketForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset('Edit', 'title', 'description', 'assignees'),
+            ButtonHolder(
+                Submit('submit', 'Change', css_class='button small'),
+                css_class='align-right'
+            )
+        )
 
         self.fields['assignees'].queryset = get_user_model().objects.all()
         self.fields['assignees'].widget.attrs['class'] = 'chosen-select'
