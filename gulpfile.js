@@ -10,7 +10,8 @@ var baseDestDir = 'tracker/static';
 gulp.task('sass', function () {
     gulp.src(baseSrcDir + '/scss/*.scss')
         .pipe(sass())
-        .pipe(gulp.dest(baseSrcDir + '/css'));
+        .pipe(gulp.dest(baseSrcDir + '/css'))
+        .pipe(livereload());
 });
 
 gulp.task('copy-foundation-fonts', function () {
@@ -40,16 +41,20 @@ gulp.task('copy-js', function () {
 	gulp.src(baseSrcDir + '/components/modernizr/modernizr.js').pipe(gulp.dest(baseDestDir + '/js/'));
 });
 
+gulp.task('html', function () {
+	gulp.src(baseTemplateDir + '/**/*.html')
+		.pipe(changed('.'))
+		.pipe(livereload());
+});
+
 gulp.task('build-styles', ['sass', 'copy-foundation-fonts'])
 
 // Watch task
 // Watches SASS
 gulp.task('watch', function() {
   livereload.listen();
-  gulp.watch([
-    baseSrcDir + '/scss/*.scss',
-    baseTemplateDir + '/*.html',
-  ], ['sass'])
+  gulp.watch(baseSrcDir + '/scss/*.scss', ['sass']);
+  gulp.watch(baseTemplateDir + '/*.html', ['html']);
 });
 
 gulp.task('build', ['build-styles', 'copy-styles', 'copy-js', 'concat-js'])

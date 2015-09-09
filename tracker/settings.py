@@ -128,7 +128,8 @@ STATIC_URL = '/static-dev/'
 # sensible default CPS settings, feel free to modify them
 CSP_DEFAULT_SRC = ("'self'", "*.gstatic.com")
 CSP_STYLE_SRC = ("'self'",)
-CSP_FONT_SRC = ("'self'", "themes.googleusercontent.com", "*.gstatic.com")
+CSP_FONT_SRC = ("'self'", "data:", "themes.googleusercontent.com",
+                "*.gstatic.com")
 CSP_FRAME_SRC = ("'self'", "www.google.com", "www.youtube.com", "accounts.google.com", "apis.google.com", "plus.google.com")
 CSP_SCRIPT_SRC = ("'self'", "*.googleanalytics.com", "*.google-analytics.com", "ajax.googleapis.com")
 CSP_IMG_SRC = ("'self'", "data:", "s.ytimg.com", "*.googleusercontent.com", "*.gstatic.com")
@@ -137,6 +138,7 @@ CSP_CONNECT_SRC = ("'self'", "plus.google.com", "www.google-analytics.com")
 if DEBUG:
     CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
     CSP_IMG_SRC += ("*.placehold.it",)
+    CSP_CONNECT_SRC += ("ws://127.0.0.1:*",)
 
 CRISPY_TEMPLATE_PACK = 'foundation-5'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('foundation-5')
