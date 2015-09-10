@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'cspreports',
     'djangae.contrib.gauth',
     'djangae.contrib.security',
+    'djangae.contrib.consistency',
     'crispy_forms',
     'crispy_forms_foundation',
     'tracker',
@@ -141,8 +142,17 @@ if DEBUG:
     CSP_CONNECT_SRC += ("ws://127.0.0.1:*",)
 
 CRISPY_TEMPLATE_PACK = 'foundation-5'
-CRISPY_ALLOWED_TEMPLATE_PACKS = ('foundation-5')
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'foundation-5'
 
 AUTH_USER_MODEL = 'djangae.GaeUser'
+
+
+CONSISTENCY_CONFIG = {
+    "cache_on_creation": True,
+    "cache_on_modification": True,
+    "cache_time": 60, # seconds
+    "caches": ["django"],
+    "only_cache_matching": [],
+}
 
 from djangae.contrib.gauth.settings import *

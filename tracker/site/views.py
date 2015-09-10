@@ -1,8 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView, \
     DeleteView
+
+from djangae.contrib.consistency import improve_queryset_consistency
 
 from .forms import ProjectForm, TicketForm
 from .models import Project, Ticket
@@ -34,8 +36,10 @@ class ProjectContextMixin(object):
 
 
 class ProjectListView(ListView):
-    model = Project
     template_name = "site/project_list.html"
+
+    def get_queryset(self):
+        return improve_queryset_consistency(Project.objects.all())
 
 project_list_view = ProjectListView.as_view()
 
@@ -72,7 +76,6 @@ class UpdateProjectView(ProjectContextMixin, UpdateView):
         kwargs['title'] = "Edit {0}".format(self.object.title)
         return kwargs
 
-
 update_project_view = login_required(UpdateProjectView.as_view())
 
 
@@ -82,12 +85,13 @@ class ProjectView(ProjectContextMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ProjectView, self).get_context_data(**kwargs)
         project = self.get_project()
+        tickets = improve_queryset_consistency(project.tickets.all())
+
         context.update({
             "project": project,
-            "tickets": project.tickets.all()
+            "tickets": tickets
         })
         return context
-
 
 project_view = ProjectView.as_view()
 
@@ -109,7 +113,6 @@ class MyTicketsView(TemplateView):
             'tickets': tickets
         }
 
-
 my_tickets_view = MyTicketsView.as_view()
 
 
@@ -127,7 +130,6 @@ class CreateTicketView(ProjectContextMixin, CreateView):
         kwargs['user'] = self.request.user
         kwargs['title'] = 'Create ticket'
         return kwargs
-
 
 create_ticket_view = login_required(CreateTicketView.as_view())
 
@@ -148,7 +150,6 @@ class UpdateTicketView(ProjectContextMixin, UpdateView):
         kwargs['title'] = "Edit {0}".format(self.object.title)
         return kwargs
 
-
 update_ticket_view = login_required(UpdateTicketView.as_view())
 
 
@@ -163,7 +164,6 @@ class TicketView(ProjectContextMixin, TemplateView):
             "ticket": ticket,
         })
         return context
-
 
 ticket_view = TicketView.as_view()
 
