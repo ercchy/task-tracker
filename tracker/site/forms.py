@@ -44,7 +44,8 @@ class ProjectForm(BaseTrackerForm):
 
 
 class TicketForm(BaseTrackerForm):
-    assignees = forms.ModelMultipleChoiceField(queryset=None, required=False)
+    #assignees = forms.ModelMultipleChoiceField(queryset=None, required=False)
+    assignees = forms.MultipleChoiceField()
 
     class Meta:
         model = Ticket
@@ -62,8 +63,9 @@ class TicketForm(BaseTrackerForm):
             )
         )
 
-        self.fields['assignees'].queryset = \
-            get_user_model().objects.all()#.values_list('email', flat=True)
+        #self.fields['assignees'].queryset = \
+        #    get_user_model().objects.all()#.values_list('email', flat=True)
+        self.fields['assignees'].choices = [(a.pk, a.email) for a in get_user_model().objects.all()]
         self.fields['assignees'].widget.attrs['class'] = 'chosen-select'
 
     def pre_save(self, instance):
