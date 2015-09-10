@@ -84,8 +84,13 @@ class ProjectView(ProjectContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectView, self).get_context_data(**kwargs)
+        user_id = str(self.request.user.pk)
         project = self.get_project()
-        tickets = improve_queryset_consistency(project.tickets.all())
+        tickets = project.tickets.all()
+        tickets = improve_queryset_consistency(tickets)
+        tickets = sorted(tickets,
+                         key=lambda i: user_id in i.assignees_ids,
+                         reverse=True)
 
         context.update({
             "project": project,
