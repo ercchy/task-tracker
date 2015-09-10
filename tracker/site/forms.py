@@ -62,14 +62,12 @@ class TicketForm(BaseTrackerForm):
             )
         )
 
-        self.fields['assignees'].choices = [(a.pk, a.email) for a in get_user_model().objects.all()]
+        self.fields['assignees'].choices = [(a.pk, a.email) for a in
+                                            get_user_model().objects.all()]
         self.fields['assignees'].widget.attrs['class'] = 'chosen-select'
 
     def pre_save(self, instance):
         instance.created_by = self.user
 
-        #When updating self.project is None so it is overriding the instance
-        #  project which is actually correct. This is only needed when
-        # project is updating and not when it is getting created
         if self.project:
             instance.project = self.project
