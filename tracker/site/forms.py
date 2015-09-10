@@ -63,7 +63,7 @@ class TicketForm(BaseTrackerForm):
         )
 
         self.fields['assignees'].queryset = \
-            get_user_model().objects.all().values_list('email', flat=True)
+            get_user_model().objects.all()#.values_list('email', flat=True)
         self.fields['assignees'].widget.attrs['class'] = 'chosen-select'
 
     def pre_save(self, instance):
