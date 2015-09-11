@@ -45,7 +45,7 @@ class ProjectForm(BaseTrackerForm):
 
 
 class TicketForm(BaseTrackerForm):
-    assignees = forms.MultipleChoiceField()
+    assignees = forms.MultipleChoiceField(required=False)
 
     class Meta:
         model = Ticket
