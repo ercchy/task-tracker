@@ -6663,3 +6663,16 @@ th.hide-for-touch {
 
 .content {
   margin-top: 1rem; }
+
+.ticket-block .description {
+  display: block;
+  display: -webkit-box;
+  max-width: 400px;
+  height: 14rem;
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.4;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis; }

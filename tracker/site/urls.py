@@ -45,5 +45,5 @@ urlpatterns = patterns(
 		ticket_view,
 		name='ticket-detail'
 	),
-	url(r'^tickets$', my_tickets_view, name='my-tickets'),
+	url(r'^$', my_tickets_view, name='my-tickets'),
 )

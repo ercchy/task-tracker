@@ -12,6 +12,7 @@ class BaseTrackerForm(FoundationModelForm):
     def __init__(self, user=None, title=None, *args, **kwargs):
         self.title = title
         self.user = user
+        self.switches = True
 
         super(BaseTrackerForm, self).__init__(*args, **kwargs)
 
@@ -48,23 +49,28 @@ class TicketForm(BaseTrackerForm):
 
     class Meta:
         model = Ticket
-        fields = ('title', 'description', 'assignees',)
+        fields = ('title', 'description', 'assignees', 'status')
 
     def __init__(self, project=None, *args, **kwargs):
         self.project = project
         super(TicketForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset('Edit', 'title', 'description', 'assignees'),
-            ButtonHolder(
-                Submit('submit', 'Change', css_class='button small'),
-                css_class='align-right'
-            )
-        )
 
         self.fields['assignees'].choices = [(a.pk, a.email) for a in
                                             get_user_model().objects.all()]
         self.fields['assignees'].widget.attrs['class'] = 'chosen-select'
+
+        if kwargs['title'] == 'Create ticket':
+            del self.fields['status']
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(kwargs['title'], 'title', 'description',
+                     'assignees', 'status'),
+            ButtonHolder(
+                Submit('submit', kwargs['title'], css_class='button small'),
+                css_class='align-right'
+            )
+        )
 
     def pre_save(self, instance):
         instance.created_by = self.user

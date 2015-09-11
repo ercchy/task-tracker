@@ -4,40 +4,65 @@
 
 {% block content %}
 <div class="large-12 large-centered columns">
-	<h4><small>This ticket was created {{ ticket.created|naturaltime }} by
-		{{ ticket.created_by.email }}</small></h4>
-	<hr />
+	
 	<div class="row">
 		<h2>{{ ticket.title }}
 			{% if user.is_authenticated %}
 				<small>
-					<a class="label"
-					   href="{% url "ticket-update" project_id=ticket.project.pk ticket_id=ticket.pk %}">
-						<i class="fi-pencil"></i>
+					<a href="{% url "ticket-update" project_id=ticket.project.pk ticket_id=ticket.pk %}">
+						edit
 					</a>
 				</small>
-			{% endif %}</h2>
+			{% endif %}
+		</h2>
+		<div class="large-10 column">
+			<h4>
+			<small>
+				This ticket was created {{ ticket.created|naturaltime }} by
+				{{ ticket.created_by.email }} <br />
+				Last update: {{ ticket.modified }}
+			</small>
+		</h4>
+		</div>
+		<div class="large-2 column">
+			{% if ticket.status == "OPEN" %}
+				<a class="button tiny" href="
+				{% url 'ticket-update' project_id=ticket.project.pk ticket_id=ticket.pk %}">
+					Edit
+				</a>
+				<a class="button tiny secondary" href="
+				{% url 'ticket-delete' project_id=ticket.project.pk ticket_id=ticket.pk %}">
+					Delete
+				</a>
+			{% endif %}
+		</div>
+		<hr />
 	</div>
 	<div class="row">
-		<div class="large-8 columns">
-			<h4>Description</h4>
-			<div>
-				{{ ticket.description }}
-			</div>
-		</div>
-	</div>
-	<hr />
-	<div class="row">
-		<div class="large-8 columns">
-			<h4>Assignees</h4>
-			<ul>
-				{% for user in ticket.assignees.all %}
-					<li>{{ user.email }}</li>
-				{% endfor %}
-			</ul>
-		</div>
+		<h4>
+			<small>Project:</small>
+			<br />
+			<a href="{% url 'project-detail' project_id=ticket.project.pk %}">
+				{{ ticket.project.title }}
+			</a>
+		</h4>
 
+		<h4><small>Assignees:</small></h4>
+		<ul>
+			{% for user in ticket.assignees.all %}
+				<li>
+					<a href="{{ user.email }}">{{ user.email }}</a></li>
+			{% endfor %}
+		</ul>
+
+		<h4>
+			<small>Description</small>
+		</h4>
+		<div>
+			{{ ticket.description }}
+		</div>
 	</div>
+
 
 <div class="row">
 	<div class="controls">

@@ -1,17 +1,35 @@
 {% extends "base.html" %}
 
+{% load humanize %}
+
 {% block content %}
 <div class="row">
 	<div class="large-12 columns">
 		<div class="row">
 			<div class="row">
 			{% for ticket in tickets %}
-				<div class="large-3 medium-6 small-12 columns{% if forloop.last %} end{% endif %}">
-					<div class="panel">
-						<h5><a href="{% url "ticket-update" project_id=ticket.project_id ticket_id=ticket.pk %}">{{ ticket.project.title }}: {{ ticket.title }}</a></h5>
+				<div class="ticket-block-wrap large-3 medium-6 sma
+				ll-12 columns{% if forloop.last %} end{% endif %}">
+					<div class="panel ticket-block">
+						<h6>
+							<small>Project: </small>
+							<br />
+
+							<a href="
+							{% url "project-detail" project_id=ticket.project.pk %}">
+								{{ ticket.project.title }}
+							</a>
+							<br />
+							<small>Ticket:</small>
+							<br />
+							<a href="
+							{% url "ticket-detail" project_id=ticket.project_id ticket_id=ticket.pk %}">
+								{{ ticket.title }}
+							</a>
+						</h6>
 						<hr>
-						<p>{{ ticket.description }}</p>
-						<small>Last updated: {{ ticket.modified }}</small>
+						<div class="description">{{ ticket.description }}</div>
+						<small>Last updated: {{ ticket.modified|naturaltime }}</small>
 					</div>
 				</div>
 			{% empty %}

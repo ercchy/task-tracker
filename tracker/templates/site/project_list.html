@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load project_extras %}
+
 {% block content %}
 <div class="large-12 large-centered columns">
 	<div class="row">
@@ -16,11 +18,18 @@
 				<tr>
 					<td>
 						<a href="{% url "project-detail" project_id=project.pk %}">
-							{{ project.title }} <span class="label">{{ project.tickets.count }}</span>
+							{{ project.title }}
 						</a>
+						<br />
+						<small>
+							This project has {{ project.tickets.count }} tickets
+							({{ project.tickets.all|get_status_count:"OPEN" }} opened,
+							{{ project.tickets.all|get_status_count:"CLOSED" }} closed)
+						</small>
 					</td>
 					<td>
-						<a href="{% url "project-update" project_id=project.pk %}">
+						<a class="button tiny"
+						   href="{% url "project-update" project_id=project.pk %}">
 							<i class="fi-pencil"></i>
 						</a>
 					</td>

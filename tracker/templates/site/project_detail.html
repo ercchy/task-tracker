@@ -1,77 +1,143 @@
 {% extends "base.html" %}
 
 {% load humanize %}
+{% load project_extras %}
 
 {% block content %}
-<div class="large-12 large-centered columns">
-	<div class="row">
-		<h2><small>Project name</small>
-			<br />{{ project.title }}
-			{% if user.is_authenticated %}
-				<small>
-					<a href="{% url "project-update" project_id=project.pk %}">edit</a>
-				</small>
-			{% endif %}
-		</h2>
-		<h4>
-			<small>The work on this project started {{ project.created|naturaltime }}
-				by {{ project.created_by.email }}</small>
-		</h4>
-	</div>
-
-	{% if tickets %}
+	<div class="large-12 large-centered columns">
 		<div class="row">
-			<table>
-				<thead>
-				<tr>
-					<th width="1200">Title</th>
-					<th width="1200">Assigned</th>
-					<th></th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-				{% for ticket in tickets %}
+			<h2>
+				<small>Project name</small>
+				<br />{{ project.title }}
+				{% if user.is_authenticated %}
+					<small>
+						<a href="{% url "project-update" project_id=project.pk %}">edit</a>
+					</small>
+				{% endif %}
+			</h2>
+			<h4>
+				<small>The work on this project
+					begun {{ project.created|naturaltime }} by
+					<a href="mailto:{{ project.created_by.email }}">
+						{{ project.created_by.email }}
+					</a>
+					<br />
+					Last update: {{ project.modified|naturaltime }}
+				</small>
+			</h4>
+		</div>
+
+		{% if tickets|get_status_count:"OPEN" %}
+			<div class="row">
+				<table>
+					<thead>
 					<tr>
-						<td>
-							<a href="
-						{% url 'ticket-detail' project_id=ticket.project_id ticket_id=ticket.pk %}"
-									>{{ ticket.title }}</a>
-						</td>
-						<td>
-							{% with users=ticket.assignees.all %}
-								{% if users %}
-									{% for user in users %}
-										{{ user.email }}{% if not forloop.last %},{% endif %}
-									{% endfor %}
-								{% else %}
-									No assigned users
-								{% endif %}
-							{% endwith %}
-						</td>
-						<td>
-							<a class="button tiny" href=
-									    "{% url "ticket-update" project_id=project.pk ticket_id=ticket.pk %}">
-								<i class="fi-pencil"></i>
-							</a>
-						</td>
-						<td>
-							<form method="post"
-							      action="{% url "ticket-delete" project_id=project.pk ticket_id=ticket.pk %}">
-								{% csrf_token %}
-								<button type="submit" name="submit" class="button tiny">
-									<i class="fi-x"></i>
-								</button>
-							</form>
-						</td>
+						<th width="1200">Title</th>
+						<th width="600">Assigned</th>
+						<th width="600">Created</th>
+						<th width="600">Updated</th>
+						<th>Edit</th>
+						<th>Delete</th>
 					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+					</thead>
+					<tbody>
+					{% for ticket in tickets %}
+						{% if ticket.status == 'OPEN' %}
+							<tr>
+								<td>
+									<a href="
+					{% url 'ticket-detail' project_id=ticket.project_id ticket_id=ticket.pk %}"
+											>{{ ticket.title }}</a>
+								</td>
+								<td>
+									{% with users=ticket.assignees.all %}
+										{% if users %}
+											{% for user in users %}
+												<a href="mailto:{{ user.email }}">
+													{{ user.email }}
+												</a>
+												{% if not forloop.last %} <br /> {% endif %}
+											{% endfor %}
+										{% else %}
+											No assigned users
+										{% endif %}
+									{% endwith %}
+								</td>
+								<td>{{ ticket.created|naturaltime }}</td>
+								<td>{{ ticket.modified|naturaltime }}</td>
+								<td>
+									<a class="button tiny" href=
+											"{% url "ticket-update" project_id=project.pk ticket_id=ticket.pk %}">
+										<i class="fi-pencil"></i>
+									</a>
+								</td>
+								<td>
+									<form method="post"
+									      action="{% url "ticket-delete" project_id=project.pk ticket_id=ticket.pk %}">
+										{% csrf_token %}
+										<button type="submit" name="submit" class="button tiny">
+											<i class="fi-x"></i>
+										</button>
+									</form>
+								</td>
+							</tr>
+						{% endif %}
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% endif %}
+			<div class="row">
+				<p>
+					<a href="{% url "ticket-create" project_id=project.pk %}"
+					   class="button">Create ticket
+					</a>
+				</p>
+			</div>
+		{% if tickets|get_status_count:"CLOSED" %}
+			<div class="row">
+			<h3>Closed Tickets</h3>
+				<table>
+					<thead>
+					<tr>
+						<th width="600">Title</th>
+						<th width="600">Assigned</th>
+						<th width="600">Closed</th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for ticket in tickets %}
+						{% if ticket.status == 'CLOSED' %}
+							<tr>
+								<td>
+									<a href="
+					{% url 'ticket-detail' project_id=ticket.project_id ticket_id=ticket.pk %}"
+											>{{ ticket.title }}</a>
+								</td>
+								<td>
+									{% with users=ticket.assignees.all %}
+										{% if users %}
+											{% for user in users %}
+												<a href="mailto:{{ user.email }}">
+													{{ user.email }}
+												</a>
+												{% if not forloop.last %}<br />{% endif %}
+											{% endfor %}
+										{% else %}
+											No assigned users
+										{% endif %}
+									{% endwith %}
+								</td>
+								<td>
+									{{ ticket.modified|naturaltime }}
+								</td>
+							</tr>
+						{% endif %}
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% endif %}
+
 	</div>
-	{% endif %}
-	<div class="row">
-		<p><a href="{% url "ticket-create" project_id=project.pk %}" class="button">Create ticket</a></p>
-	</div>
-</div>
 {% endblock %}

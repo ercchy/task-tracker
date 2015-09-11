@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="row">
+
+		<div class="large-6 medium-8 large-offset-3 medium-offset-2 column">
+			<div class="panel">
+				<form action="" method="post">{% csrf_token %}
+					<input type="hidden" name="next" value="{{next}}" />
+					<p>Do you really want to delete the ticket
+						<strong>{{ ticket.title }}</strong>?
+					</p>
+
+					<div class="actions">
+						<button type="submit" value="confirm" class="button small" >
+						Delete
+						</button>
+
+						<a href="
+						{% url 'ticket-detail' project_id=ticket.project.pk ticket_id=ticket.pk %}"
+						   class="button small secondary">
+							Cancel
+						</a>
+					</div>
+				</form>
+
+			</div>
+
+		</div>
+
+
+	</div>
+{% endblock %}
