@@ -7,13 +7,6 @@
 	
 	<div class="row">
 		<h2>{{ ticket.title }}
-			{% if user.is_authenticated %}
-				<small>
-					<a href="{% url "ticket-update" project_id=ticket.project.pk ticket_id=ticket.pk %}">
-						edit
-					</a>
-				</small>
-			{% endif %}
 		</h2>
 		<div class="large-10 column">
 			<h4>

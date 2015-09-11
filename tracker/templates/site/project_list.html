@@ -10,7 +10,6 @@
 			<thead>
 				<tr>
 					<th width="1200">Project title</th>
-					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -26,22 +25,26 @@
 							({{ project.tickets.all|get_status_count:"OPEN" }} opened,
 							{{ project.tickets.all|get_status_count:"CLOSED" }} closed)
 						</small>
-					</td>
-					<td>
-						<a class="button tiny"
-						   href="{% url "project-update" project_id=project.pk %}">
-							<i class="fi-pencil"></i>
-						</a>
+						{% if user.is_authenticated %}
+							
+							<a class="button tiny pull-right"
+							   href="{% url "project-update" project_id=project.pk %}">
+								<i class="fi-pencil"></i>
+							</a>
+						{% endif %}
 					</td>
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	</div>
-	<div class="row">
-		<p>
-			<a href="{% url "project-create" %}" class="button">Create project</a>
-		</p>
-	</div>
+	{% if user.is_authenticated %}
+		
+		<div class="row">
+			<p>
+				<a href="{% url "project-create" %}" class="button">Create project</a>
+			</p>
+		</div>
+	{% endif %}
 </div>
 {% endblock %}

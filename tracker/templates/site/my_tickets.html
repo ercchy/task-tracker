@@ -7,39 +7,52 @@
 	<div class="large-12 columns">
 		<div class="row">
 			<div class="row">
-			{% for ticket in tickets %}
-				<div class="ticket-block-wrap large-3 medium-6 sma
-				ll-12 columns{% if forloop.last %} end{% endif %}">
-					<div class="panel ticket-block">
-						<h6>
-							<small>Project: </small>
-							<br />
+			{% if user.is_authenticated %}
+				{% for ticket in tickets %}
+					<div class="ticket-block-wrap large-3 medium-6 sma
+					ll-12 columns{% if forloop.last %} end{% endif %}">
+						<div class="panel ticket-block">
+							<h6>
+								<small>Project: </small>
+								<br />
 
-							<a href="
-							{% url "project-detail" project_id=ticket.project.pk %}">
-								{{ ticket.project.title }}
-							</a>
-							<br />
-							<small>Ticket:</small>
-							<br />
-							<a href="
-							{% url "ticket-detail" project_id=ticket.project_id ticket_id=ticket.pk %}">
-								{{ ticket.title }}
-							</a>
-						</h6>
-						<hr>
-						<div class="description">{{ ticket.description }}</div>
-						<small>Last updated: {{ ticket.modified|naturaltime }}</small>
+								<a href="
+								{% url "project-detail" project_id=ticket.project.pk %}">
+									{{ ticket.project.title }}
+								</a>
+								<br />
+								<small>Ticket:</small>
+								<br />
+								<a href="
+								{% url "ticket-detail" project_id=ticket.project_id ticket_id=ticket.pk %}">
+									{{ ticket.title }}
+								</a>
+							</h6>
+							<hr>
+							<div class="description">{{ ticket.description }}</div>
+							<small>Last updated: {{ ticket.modified|naturaltime }}</small>
+						</div>
 					</div>
-				</div>
-			{% empty %}
+				{% empty %}
+					<div class="panel callout">
+					<h4>You are not assigned to any tickets</h4>
+					<p>
+						Either select a project from the top bar or <a href="{% url "project-create" %}">create a new project</a>.
+					</p>
+					</div>
+				{% endfor %}
+			{% else %}
 				<div class="panel callout">
-				<h4>You are not assigned to any tickets</h4>
-				<p>
-					Either select a project from the top bar or <a href="{% url "project-create" %}">create a new project</a>.
-				</p>
-				</div>
-			{% endfor %}
+					<h4 class="text-center">
+						You need to be signed in to see your tickets.
+					</h4>
+					<p class="text-center">
+						<a class="button" href="{% url "djangae_login_redirect" %}">
+							Sign in here
+						</a>
+					</p>
+					</div>
+			{% endif %}
 			</div>
 		</div>
 	</div>

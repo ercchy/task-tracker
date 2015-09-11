@@ -98,7 +98,7 @@ class ProjectView(ProjectContextMixin, TemplateView):
         })
         return context
 
-project_view = ProjectView.as_view()
+project_view = login_required(ProjectView.as_view())
 
 
 class MyTicketsView(TemplateView):
@@ -182,4 +182,4 @@ class DeleteTicketView(ProjectContextMixin, DeleteView):
         return reverse("project-detail",
                        kwargs={"project_id": self.kwargs['project_id']})
 
-delete_ticket_view = DeleteTicketView.as_view()
+delete_ticket_view = login_required(DeleteTicketView.as_view())

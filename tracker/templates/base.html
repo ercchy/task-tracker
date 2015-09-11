@@ -45,9 +45,11 @@
 								<li>
 									<a href="{% url "project-list" %}">All projects</a>
 								</li>
-								<li>
-									<a href="{% url "project-create" %}">Create project</a>
-								</li>
+								{% if user.is_authenticated %}
+									<li>
+										<a href="{% url "project-create" %}">Create project</a>
+									</li>
+								{% endif %}
 							</ul>
 							<ul class="right">
 								{% if user.is_authenticated %}

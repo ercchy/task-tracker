@@ -7060,6 +7060,12 @@ th.hide-for-touch {
     background-size: 52px 37px !important;
     background-repeat: no-repeat !important; } }
 
+.pull-right {
+  float: right; }
+
+.text-center {
+  text-align: center; }
+
 .row.row--full-width {
   max-width: 100%; }
   .row.row--full-width > div:first-child, .row.row--full-width > div:last-child {
