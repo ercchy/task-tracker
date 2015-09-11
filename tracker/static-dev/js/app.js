@@ -1,2 +1,3 @@
-$(document).foundation();
 $(".chosen-select").chosen();
+$(document).foundation();
+
