@@ -36,7 +36,7 @@ class ProjectContextMixin(object):
 
 
 class ProjectListView(ListView):
-    template_name = "site/project_list.html"
+    template_name = 'site/project_list.html'
 
     def get_queryset(self):
         return improve_queryset_consistency(Project.objects.all())
@@ -47,10 +47,10 @@ project_list_view = ProjectListView.as_view()
 class CreateProjectView(CreateView):
     model = Project
     form_class = ProjectForm
-    template_name = "site/project_form.html"
+    template_name = 'site/project_form.html'
 
     def get_success_url(self):
-        return reverse("project-list")
+        return reverse('project-list')
 
     def get_form_kwargs(self):
         kwargs = super(CreateProjectView, self).get_form_kwargs()
@@ -65,22 +65,22 @@ class UpdateProjectView(ProjectContextMixin, UpdateView):
     model = Project
     form_class = ProjectForm
     pk_url_kwarg = 'project_id'
-    template_name = "site/project_form.html"
+    template_name = 'site/project_form.html'
 
     def get_success_url(self):
-        return reverse("project-list")
+        return reverse('project-list')
 
     def get_form_kwargs(self):
         kwargs = super(UpdateProjectView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['title'] = "Edit {0}".format(self.object.title)
+        kwargs['title'] = 'Edit {0}'.format(self.object.title)
         return kwargs
 
 update_project_view = login_required(UpdateProjectView.as_view())
 
 
 class ProjectView(ProjectContextMixin, TemplateView):
-    template_name = "site/project_detail.html"
+    template_name = 'site/project_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(ProjectView, self).get_context_data(**kwargs)
@@ -93,8 +93,8 @@ class ProjectView(ProjectContextMixin, TemplateView):
                          reverse=True)
 
         context.update({
-            "project": project,
-            "tickets": tickets
+            'project': project,
+            'tickets': tickets
         })
         return context
 
@@ -102,13 +102,13 @@ project_view = login_required(ProjectView.as_view())
 
 
 class MyTicketsView(TemplateView):
-    template_name = "site/my_tickets.html"
+    template_name = 'site/my_tickets.html'
 
     def get_context_data(self):
         if self.request.user.is_authenticated():
             tickets = (
                 Ticket.objects
-                .filter(assignees=str(self.request.user.pk), status="OPEN")
+                .filter(assignees=str(self.request.user.pk), status='OPEN')
                 .order_by('-modified')
             )
             print self.request.user.pk
@@ -125,10 +125,10 @@ my_tickets_view = MyTicketsView.as_view()
 class CreateTicketView(ProjectContextMixin, CreateView):
     model = Ticket
     form_class = TicketForm
-    template_name = "site/ticket_form.html"
+    template_name = 'site/ticket_form.html'
 
     def get_success_url(self):
-        return reverse("project-detail", kwargs={"project_id": self.kwargs['project_id']})
+        return reverse('project-detail', kwargs={'project_id': self.kwargs['project_id']})
 
     def get_form_kwargs(self):
         kwargs = super(CreateTicketView, self).get_form_kwargs()
@@ -144,31 +144,31 @@ class UpdateTicketView(ProjectContextMixin, UpdateView):
     model = Ticket
     form_class = TicketForm
     pk_url_kwarg = 'ticket_id'
-    template_name = "site/ticket_form.html"
+    template_name = 'site/ticket_form.html'
 
     def get_success_url(self):
-        return reverse("project-detail",
-                       kwargs={"project_id": self.kwargs['project_id']})
+        return reverse('project-detail',
+                       kwargs={'project_id': self.kwargs['project_id']})
 
     def get_form_kwargs(self):
         kwargs = super(UpdateTicketView, self).get_form_kwargs()
         kwargs['project'] = self.project
         kwargs['user'] = self.request.user
-        kwargs['title'] = "Edit {0}".format(self.object.title)
+        kwargs['title'] = 'Edit {0}'.format(self.object.title)
         return kwargs
 
 update_ticket_view = login_required(UpdateTicketView.as_view())
 
 
 class TicketView(ProjectContextMixin, TemplateView):
-    template_name = "site/ticket_detail.html"
+    template_name = 'site/ticket_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(TicketView, self).get_context_data(**kwargs)
 
         ticket = self.get_ticket()
         context.update({
-            "ticket": ticket,
+            'ticket': ticket,
         })
         return context
 
@@ -179,7 +179,7 @@ class DeleteTicketView(ProjectContextMixin, DeleteView):
     pk_url_kwarg = 'ticket_id'
 
     def get_success_url(self):
-        return reverse("project-detail",
-                       kwargs={"project_id": self.kwargs['project_id']})
+        return reverse('project-detail',
+                       kwargs={'project_id': self.kwargs['project_id']})
 
 delete_ticket_view = login_required(DeleteTicketView.as_view())
