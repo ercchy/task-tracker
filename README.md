@@ -1,23 +1,48 @@
 
-# Potato Backend Developer Test
+#About
+This is very basic task tracking system. It is o so basic.
 
-This is a basic Django project which is designed to provide you with a few challenges to demonstrate your ability.
+You can create a task and delete it, you can even change it's status to "Done".
 
-The application is a ticketing application. It stores tickets within projects and allows users to be assigned to these tickets.
+For this project Django was used. All the views were written as class based 
+views, which I got to know trough working on this. Before I did not use them.
 
-Please fix the bugs and implement the features listed below.
+What is special about this project is, that it is Django but is playing 
+nicely with Google App Engine datastore. Basically it's working with NoSQL 
+database.
 
-Ensure that your code is committed with meaningful commit messages; show your working.
+This was possible with the use of [djangae](http://djangae.readthedocs
+.org/en/latest/)(jan-gee), developed by people from [Potato London]
+(https://p.ota.to/).
 
-When you are finished please provide us with a URL to a repository where we can check out your code.
+### Eventual consistency
 
+Pages needed a refresh after updating an object in the application
+
+This is due to the fact that the Google App Engine datastore is an 'eventually consistant' database. Once an entity is saved some data retrieval operations may not immediately reflect this change. To read more about this see the Google App Engine [Datastore](https://cloud.google.com/appengine/docs/python/datastore/) documentation.
+
+I solved this with using the Djangae built contrib app.
+It caches recently created and/or modified objects so that it knows about them even if they're not yet being returned by the Datastore. You can read more about what it is doing and how
+ [here](http://djangae.readthedocs.org/en/latest/consistency/)
+ 
+####Other possible solutions:
+* We could just plainly wait for specific amount of time and then call the 
+view. This of course is not very efficient and has all sorts of problems, 
+however based on the complexity and the scale of the project it could be a 
+solution in some cases.
+* We could send a request to DB but and trust it to actually execute 
+everything while we would change UI without conformation from DB. Seems very
+ error prone.
+* We can store object in cache and make inmemory changes.
+
+
+----------
 ## Setup
 
 - Run `./install_deps` (this will pip install requirements, and download the App Engine SDK)
 - `python manage.py loaddata site`
 - `python manage.py runserver`
 
-The application is written using the [Djangae](http://djangae.readthedocs.org/en/latest/) project
 
 ## Tasks - bugs
 
@@ -43,10 +68,4 @@ If you feel like carrying on improving this application, please do!
 
 The following consistency task is one that you might like to have a look at.
 
-### Eventual consistency
 
-Pages seem to need a refresh after updating an object in the application
-
-This is due to the fact that the Google App Engine datastore is an 'eventually consistant' database. Once an entity is saved some data retrieval operations may not immediately reflect this change. To read more about this see the Google App Engine [Datastore](https://cloud.google.com/appengine/docs/python/datastore/) documentation.
-
-Can you create a solution to solve this problem?  There is no right or wrong solution.
